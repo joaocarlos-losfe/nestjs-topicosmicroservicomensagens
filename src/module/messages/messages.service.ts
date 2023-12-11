@@ -26,7 +26,7 @@ export class MessagesService {
     }
     
     async getAllMessages():Promise<Message[]>{
-        return await this.prisma.message.findMany();
+        return await this.prisma.message.findMany({include: {responses: {}}});
     }
 
     async get(id: string):Promise<Message>{

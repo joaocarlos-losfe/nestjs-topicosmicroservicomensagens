@@ -16,7 +16,7 @@ model Message {
   subject String?
   user    String
   
-  messages Response[]
+  responses Response[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now())
@@ -28,8 +28,7 @@ model Response {
   id           String     @id @default(uuid())
 
   response     String
-  user String
-  published    Boolean @default(false)
+  user         String
 
   message    Message  @relation(fields: [messageId], references: [id], onDelete: Cascade)
   messageId  String
