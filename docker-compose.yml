@@ -5,12 +5,15 @@ services:
   messagedb:
     image: postgres
     restart: always
+    expose:
+    - '5434'
     ports:
-      - 5434:5434
+      - '5434:5434'
     environment:
       - POSTGRES_USER=usuario
       - POSTGRES_PASSWORD=1234
       - POSTGRES_DB=messagesdatabase
+    command: -p 5434
 
   messageapi:
     build:
