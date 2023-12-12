@@ -1,0 +1,25 @@
+version: '3.1'
+
+services:
+  
+  messagedb:
+    image: postgres
+    restart: always
+    ports:
+      - 5434:5434
+    environment:
+      - POSTGRES_USER=usuario
+      - POSTGRES_PASSWORD=1234
+      - POSTGRES_DB=messagesdatabase
+
+  messageapi:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: always
+    ports:
+      - '5000:5000'
+    depends_on:
+      - messagedb
+    volumes:
+      - ./src:/app/src

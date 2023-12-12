@@ -2,7 +2,7 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/database/PrismaService';
 import { MessageCreate } from './dtos/message-create.dto';
 import { Message } from './entities/message';
-import { MessageUpdate, MessageUpdateUsername } from './dtos/message-update.dto';
+import { MessageUpdate } from './dtos/message-update.dto';
 import axios from 'axios';
 
 
