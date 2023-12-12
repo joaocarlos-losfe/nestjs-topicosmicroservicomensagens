@@ -16,7 +16,7 @@ export class ResponsesService {
             if(!foundMessage)
                 throw new HttpException('Mensagem não encontrada', HttpStatus.NOT_FOUND);
 
-            const response = await axios.get(`http://localhost:3001/user/get-by-username/${data.user}`);
+            const response = await axios.get(`http://172.20.0.4:3001/user/get-by-username/${data.user}`);
 
             if(!response.data)
                 throw new HttpException('Usuário não encontrado', HttpStatus.NOT_FOUND);

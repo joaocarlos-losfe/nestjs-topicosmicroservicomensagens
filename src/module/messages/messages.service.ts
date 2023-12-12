@@ -11,18 +11,16 @@ export class MessagesService {
     constructor(private prisma: PrismaService){}
 
     async create(data: MessageCreate): Promise<Message>{
-        try{
-            const response = await axios.get(`http://localhost:3001/user/get-by-username/${data.user}`);
+        
+        const response = await axios.get(`http://172.20.0.4:3001/user/get-by-username/${data.user}`);
 
-            if(response.data)
-                return await this.prisma.message.create({data});
+        console.log(response)
+
+        if(response.data)
+            return await this.prisma.message.create({data});
                 
-            throw new HttpException('Usuário não encontrado', HttpStatus.NOT_FOUND);
+        throw new HttpException('Usuário não encontrado', HttpStatus.NOT_FOUND);
            
-        }
-        catch {
-            throw new HttpException('Usuário não encontrado', HttpStatus.NOT_FOUND);
-        }
     }
     
     async getAllMessages():Promise<Message[]>{
