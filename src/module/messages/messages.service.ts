@@ -5,6 +5,7 @@ import { Message } from './entities/message';
 import { MessageUpdate } from './dtos/message-update.dto';
 import axios from 'axios';
 
+//http://172.20.0.4:3001/user/get-by-username/${data.user}`
 
 @Injectable()
 export class MessagesService {
@@ -12,14 +13,17 @@ export class MessagesService {
 
     async create(data: MessageCreate): Promise<Message>{
         
-        const response = await axios.get(`http://172.20.0.4:3001/user/get-by-username/${data.user}`);
+        try{
+            const response = await axios.get(`http://userapi:3001/user/get-by-username/${data.user}`);
 
-        console.log(response)
-
-        if(response.data)
-            return await this.prisma.message.create({data});
-                
-        throw new HttpException('Usuário não encontrado', HttpStatus.NOT_FOUND);
+            if(response.data)
+                return await this.prisma.message.create({data});
+                    
+            throw new HttpException('Usuário não encontrado', HttpStatus.NOT_FOUND);
+        }
+        catch {
+            throw new HttpException('Usuário não encontrado', HttpStatus.NOT_FOUND);
+        }
            
     }
     
@@ -79,5 +83,9 @@ export class MessagesService {
             throw new HttpException('Mensagem não encontrada', HttpStatus.NOT_FOUND);
 
         return await this.prisma.message.delete({where:{id}});
+    }
+
+    async deleteAllMessagesByUser(username: string){
+        return await this.prisma.message.deleteMany({where:{user: username}});
     }
 }

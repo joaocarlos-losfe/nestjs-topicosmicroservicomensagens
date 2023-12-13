@@ -4,6 +4,7 @@ import { ResponseCreate } from './dtos/response-create.dto';
 import axios from 'axios';
 import { ResponseUpdate } from './dtos/response-update.dto';
 
+//172.20.0.4
 
 @Injectable()
 export class ResponsesService {
@@ -16,11 +17,10 @@ export class ResponsesService {
             if(!foundMessage)
                 throw new HttpException('Mensagem não encontrada', HttpStatus.NOT_FOUND);
 
-            const response = await axios.get(`http://172.20.0.4:3001/user/get-by-username/${data.user}`);
+            const response = await axios.get(`http://userapi:3001/user/get-by-username/${data.user}`);
 
             if(!response.data)
                 throw new HttpException('Usuário não encontrado', HttpStatus.NOT_FOUND);
-
 
             return await this.prisma.response.create({data});
         }
@@ -29,12 +29,54 @@ export class ResponsesService {
         }
     }
 
+    async getAll(){
+        return this.prisma.response.findMany({include:{
+            message:{
+                select:{
+                    message: true,
+                    user: true,
+                    createdAt: true
+                }
+            }
+        }});
+    }
+
     async get(id: string){
-        return await this.prisma.response.findUnique({where:{id}})
+
+        const response = await this.prisma.response.findUnique({where:{id}, 
+            include:{
+                message:{
+                    select:{
+                        message: true,
+                        user: true,
+                        createdAt: true
+                    }
+                }
+        }});
+
+        if(!response)
+            throw new HttpException('Resposta não encontrada', HttpStatus.NOT_FOUND);
+    
+        return response;
     }
 
     async getByUser(username: string){
-        return await this.prisma.response.findFirst({where: {user: username}});
+
+        const response = await this.prisma.response.findFirst({where: {user: username}, 
+            include:{
+                message:{
+                    select:{
+                        message: true,
+                        user: true,
+                        createdAt: true
+                    }
+                }
+        }});
+
+        if(!response)
+            throw new HttpException('Nenhuma resposta encontrada para este usuário', HttpStatus.NOT_FOUND);
+
+        return response;
     }
 
     async update(id: string, data: ResponseUpdate){
@@ -43,7 +85,21 @@ export class ResponsesService {
         if(!foundResponse)
             throw new HttpException('Resposta não encontrada', HttpStatus.NOT_FOUND);
 
-        return this.prisma.response.update({where:{id}, data:{...data}})
+        return this.prisma.response.update({where:{id}, data:{...data, updatedAt: new Date()}})
+    }
+
+    async updateUsername(username: string, newUsername: string){
+
+        const updatedResponse = await this.prisma.response.updateMany({
+            data: {
+                user: newUsername,
+                updatedAt: new Date()
+            }, 
+            where:{user: username}
+        });
+
+        return updatedResponse;
+
     }
 
     async delete(id: string){
